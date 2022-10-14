@@ -1,60 +1,66 @@
-const User = require('../model/user_model.js');
 const jwt = require('jsonwebtoken');
 const ErrorHandler = require('../common/error_handler');
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const catchAsync = require('../common/catch_Async');
+const signToken = (id, name, email, role) => {
+  return jwt.sign({ id, name, email, role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
-exports.register = async (req, res, next) => {
-  try {
-    const newUser = await User.create(req.body);
+const createSendToken = (user, statusCode, req, res) => {
+  const token = signToken(user._id);
 
-    const token = signToken(newUser._id);
-    res.status(201).json({
-      status: 'success',
-      token,
-      data: {
-        newUser,
-      },
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: 'fail',
-      message: error.message,
-    });
-  }
-};
+  res.cookie('jwt', token, {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  });
 
-exports.registerElectoralAdmin = async (req, res, next) => {
-  res.status(200).json({
+  res.status(statusCode).json({
     status: 'success',
-    message: 'I am protected',
+    token,
+    data: {
+      user,
+    },
   });
 };
-exports.login = async (req, res, next) => {
-  const { email, password } = req.body;
+
+exports.register = catchAsync(async (req, res, next) => {
+  const register = await obj.create(req.body);
+  createSendToken(register, 201, req, res);
+  if (!register) {
+    return next(new ErrorHandler('heyyy', 400));
+  }
+});
+
+exports.registerElectoralAdmin = async (req, res, next) => {
   try {
+    res.status(200).json({
+      status: 'success',
+      message: 'I am protected',
+    });
+  } catch (err) {
+    return next(
+      new ErrorHandler('You do not have permission to perform this action', 403)
+    );
+  }
+};
+exports.login = (obj) =>
+  catchAsync(async (req, res, next) => {
+    const { email, password } = req.body;
+
     // 1) Check if email and password exist
     if (!email || !password) {
       return next(new ErrorHandler('Please provide email and password!', 400));
     }
     // 2) Check if user exists && password is correct
-    const user = await User.findOne({ email }).select('+password');
+    const login = await obj.findOne({ email }).select('+password');
 
-    if (!user || !(await user.correctPassword(password, user.password))) {
+    if (!login || !(await login.correctPassword(password, login.password))) {
       return next(new ErrorHandler('Incorrect email or password', 401));
     }
 
     // 3) If everything ok, send token to client
-    const token = signToken(user._id);
-    res.status(200).json({
-      status: 'success',
-      token,
-      message: 'logged in successfully',
-    });
-  } catch (err) {
-    return next(new ErrorHandler(err.message, 400));
-  }
-};
+    createSendToken(login, 201, req, res);
+  });

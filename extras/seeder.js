@@ -1,5 +1,5 @@
 const fs = require('fs');
-const User = require('../model/user_model.js');
+const User = require('../model/user.model.js');
 
 const superadminsList = JSON.parse(
   fs.readFileSync(`./data/superadmin.json`, 'utf-8')

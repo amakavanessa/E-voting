@@ -1,36 +1,62 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please tell us your name!'],
+    required: true,
   },
   email: {
     type: String,
-    required: [true, 'Please provide your email'],
+    required: true,
     unique: true,
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
-
+  contactAddress: {
+    type: String,
+    required: true,
+  },
+  tel: {
+    type: Number,
+    required: true,
+  },
+  DOB: {
+    type: Date,
+    required: true,
+  },
+  age: {
+    type: Number,
+    min: 18,
+    required: true,
+  },
+  religion: {
+    type: String,
+    required: true,
+  },
+  Residence: {
+    type: String,
+    required: true,
+  },
+  LGA: {
+    type: String,
+    required: true,
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
     minlength: 8,
     //so it will not display on the res file
     select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      // This only works on CREATE and SAVE!!!
-      validator: function (el) {
-        return el === this.password;
-      },
-      message: 'Passwords are not the same!',
-    },
   },
   role: {
     type: String,
@@ -40,10 +66,11 @@ const userSchema = new mongoose.Schema({
       'electoral_body_admin',
       'election_candidate',
       'voter',
-      'umpireS',
+      'umpire',
     ],
     default: 'voter',
   },
+  photo: String,
 });
 
 userSchema.pre('save', async function (next) {
