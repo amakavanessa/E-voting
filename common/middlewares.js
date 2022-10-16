@@ -2,7 +2,7 @@ const app = require('./../app');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../model/user.model');
-const ErrorHandler = require('./error_handler');
+const ErrorHandler = require('../errorController/error_handler');
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {

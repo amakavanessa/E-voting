@@ -1,5 +1,5 @@
 const catchAsync = require('../common/catch_Async');
-const ErrorHandler = require('../common/error_handler');
+const ErrorHandler = require('../errorController/error_handler');
 const APIFeatures = require('../utils/APIFeatures');
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
