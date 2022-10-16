@@ -1,6 +1,7 @@
 const User = require('../model/user.model.js');
 const jwt = require('jsonwebtoken');
 const ErrorHandler = require('../common/error_handler');
+const AuthError = require('../common/auth.error');
 const catchAsync = require('../common/catch_Async');
 const signToken = (data) => {
   return jwt.sign(JSON.parse(JSON.stringify(data)), process.env.JWT_SECRET, {
@@ -58,7 +59,8 @@ exports.login = catchAsync(async (req, res, next) => {
   const login = await User.findOne({ email }).select('+password');
 
   if (!login || !(await login.correctPassword(password, login.password))) {
-    return next(new ErrorHandler('Incorrect email or password', 401));
+    throw new AuthError('Incorrect email or password');
+    // return next(new ErrorHandler('Incorrect email or password', 401));
   }
 
   // 3) If everything ok, send token to client

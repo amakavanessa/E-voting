@@ -1,7 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
-const createError = require('http-errors');
+const globalErrorHandler = require('./errorController/error.controller');
 
 const userRouter = require('./routes/user.routes');
 const adminRouter = require('./routes/admin.routes');
@@ -21,3 +21,6 @@ app.listen(port, () => {
 
 app.use('/users', userRouter);
 app.use('/admin', adminRouter);
+app.use(globalErrorHandler);
+
+module.exports = app;
