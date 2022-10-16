@@ -1,14 +1,15 @@
+const User = require('../model/user.model.js');
 const jwt = require('jsonwebtoken');
 const ErrorHandler = require('../common/error_handler');
 const catchAsync = require('../common/catch_Async');
-const signToken = (id, name, email, role) => {
-  return jwt.sign({ id, name, email, role }, process.env.JWT_SECRET, {
+const signToken = (data) => {
+  return jwt.sign(JSON.parse(JSON.stringify(data)), process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
 const createSendToken = (user, statusCode, req, res) => {
-  const token = signToken(user._id);
+  const token = signToken(user);
 
   res.cookie('jwt', token, {
     expires: new Date(
@@ -27,7 +28,7 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.register = catchAsync(async (req, res, next) => {
-  const register = await obj.create(req.body);
+  const register = await User.create(req.body);
   createSendToken(register, 201, req, res);
   if (!register) {
     return next(new ErrorHandler('heyyy', 400));
@@ -46,21 +47,20 @@ exports.registerElectoralAdmin = async (req, res, next) => {
     );
   }
 };
-exports.login = (obj) =>
-  catchAsync(async (req, res, next) => {
-    const { email, password } = req.body;
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
 
-    // 1) Check if email and password exist
-    if (!email || !password) {
-      return next(new ErrorHandler('Please provide email and password!', 400));
-    }
-    // 2) Check if user exists && password is correct
-    const login = await obj.findOne({ email }).select('+password');
+  // 1) Check if email and password exist
+  if (!email || !password) {
+    return next(new ErrorHandler('Please provide email and password!', 400));
+  }
+  // 2) Check if user exists && password is correct
+  const login = await User.findOne({ email }).select('+password');
 
-    if (!login || !(await login.correctPassword(password, login.password))) {
-      return next(new ErrorHandler('Incorrect email or password', 401));
-    }
+  if (!login || !(await login.correctPassword(password, login.password))) {
+    return next(new ErrorHandler('Incorrect email or password', 401));
+  }
 
-    // 3) If everything ok, send token to client
-    createSendToken(login, 201, req, res);
-  });
+  // 3) If everything ok, send token to client
+  createSendToken(login, 201, req, res);
+});
