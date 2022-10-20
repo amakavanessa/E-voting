@@ -2,7 +2,7 @@ const catchAsync = require('../common/catch_Async');
 const ErrorHandler = require('../errorController/error_handler');
 const APIFeatures = require('../utils/APIFeatures');
 exports.getAll = (Model) =>
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (req, res) => {
     const features = new APIFeatures(Model.find(), req.query)
       .filter()
       .sort()

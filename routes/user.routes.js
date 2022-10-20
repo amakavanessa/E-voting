@@ -4,7 +4,20 @@ const auth = require('../controller/authentication.controller');
 const middlewares = require('../common/middlewares');
 const router = express.Router();
 
-router.post('/register', auth.register);
-router.post('/login', auth.login);
+router.post('/register', (req, res) => {
+  let user = req.body;
+  auth.register(User, user, res);
+});
+
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  let token = await auth.login(email, password);
+  console.log(token);
+  return res.status(200).json({
+    status: 'success',
+    token,
+    email,
+  });
+});
 
 module.exports = router;
