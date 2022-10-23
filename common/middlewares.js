@@ -2,18 +2,19 @@ const app = require('./../app');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../model/user.model');
+const catchAsync = require('../common/catch_Async');
 const ErrorHandler = require('../errorController/error_handler');
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next(new ErrorHandler('You dont have permission.', 401));
+      throw new ErrorHandler('You dont have permission.', 401);
     }
     next();
   };
 };
 
-exports.protect = async (req, res, next) => {
+exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
   if (
@@ -23,11 +24,9 @@ exports.protect = async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
   if (!token) {
-    return next(
-      new ErrorHandler(
-        'You are not logged in! Please log in to get access.',
-        401
-      )
+    throw new ErrorHandler(
+      'You are not logged in! Please log in to get access.',
+      401
     );
   }
 
@@ -38,11 +37,9 @@ exports.protect = async (req, res, next) => {
 
   const currentUser = await User.findById(decoded._id);
   if (!currentUser) {
-    return next(
-      new ErrorHandler(
-        'The user belonging to this token does no longer exist.',
-        401
-      )
+    throw new ErrorHandler(
+      'The user belonging to this token does no longer exist.',
+      401
     );
   }
   //check if user changed password after the token was issued
@@ -55,5 +52,4 @@ exports.protect = async (req, res, next) => {
   // console.log(currentUser);
 
   next();
-};
-// https://app.getpostman.com/join-team?invite_code=6a5e2766c681596b022f6b18d853185c
+});
