@@ -2,7 +2,7 @@ const express = require('express');
 const User = require('../model/user.model.js');
 const auth = require('../controller/authentication.controller');
 const catchAsync = require('../common/catch_Async');
-const sendSuccessRes = require('../utils/sucessResponse');
+const sendSuccessRes = require('../utils/successResponse');
 const router = express.Router();
 
 router.post(

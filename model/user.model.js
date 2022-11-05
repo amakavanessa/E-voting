@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   role: {
-    type: String,
+    type: [String],
     enum: [
       'superadmin',
       'electoral_body_superadmin',

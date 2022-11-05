@@ -13,10 +13,6 @@ const voterSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  result: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Result',
-  },
 });
 
 const Voter = mongoose.model('Voter', voterSchema);

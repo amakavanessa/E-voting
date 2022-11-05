@@ -5,7 +5,7 @@ const User = require('./../model/user.model');
 const catchAsync = require('../common/catch_Async');
 const ErrorHandler = require('../errorController/error_handler');
 
-exports.restrictTo = (...roles) => {
+exports.restrictTo = (roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       throw new ErrorHandler('You dont have permission.', 401);

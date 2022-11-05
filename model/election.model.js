@@ -4,16 +4,14 @@ const electionSchema = new mongoose.Schema({
   electionName: {
     type: String,
     required: true,
+    unique: true,
   },
-  electionDate: [Date],
-  results: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Result',
+  electionDate: {
+    type: Date,
+    required: true,
   },
   rules: {
-    type: String,
-    required: true,
-    minlength: 50,
+    type: [String],
   },
 });
 

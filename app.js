@@ -6,6 +6,7 @@ const globalErrorHandler = require('./errorController/error.controller');
 
 const userRouter = require('./routes/user.routes');
 const adminRouter = require('./routes/admin.routes');
+const electionRouter = require('./routes/election.routes');
 const ErrorHandler = require('./errorController/error_handler');
 const app = express();
 
@@ -24,6 +25,7 @@ app.listen(port, () => {
   console.log(`App is running on port ${port}`);
 });
 
+app.use('/election', electionRouter);
 app.use('/users', userRouter);
 app.use('/admin', adminRouter);
 
