@@ -29,6 +29,17 @@ exports.getOne = async (model, id) => {
   return doc;
 };
 
+exports.getBySlug = async (model, slug) => {
+  let query = model.findOne({ slug: slug });
+
+  const doc = await query;
+
+  if (!doc) {
+    throw new ErrorHandler('No document found with that slug', 404);
+  }
+  return doc;
+};
+
 exports.getAll = async (Model, reqQuery) => {
   const features = new APIFeatures(Model.find(), reqQuery)
     .filter()

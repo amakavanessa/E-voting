@@ -35,13 +35,6 @@ router
 
 router
   .route('/:id')
-  .get(
-    catchAsync(async (req, res, next) => {
-      const id = req.params.id;
-      const election = await handler.getOne(Election, id);
-      successRes(election, null, res);
-    })
-  )
   .patch(
     catchAsync(async (req, res, next) => {
       const id = req.params.id;
@@ -57,5 +50,14 @@ router
       successRes('', null, res);
     })
   );
+
+router.get(
+  '/:slug',
+  catchAsync(async (req, res, next) => {
+    const slug = req.params.slug;
+    const election = await handler.getBySlug(Election, slug);
+    successRes(election, null, res);
+  })
+);
 
 module.exports = router;
