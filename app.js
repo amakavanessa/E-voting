@@ -7,6 +7,7 @@ const globalErrorHandler = require('./errorController/error.controller');
 const userRouter = require('./routes/user.routes');
 const adminRouter = require('./routes/admin.routes');
 const electionRouter = require('./routes/election.routes');
+const voterRouter = require('./routes/voter.routes');
 const ErrorHandler = require('./errorController/error_handler');
 const app = express();
 
@@ -28,6 +29,7 @@ app.listen(port, () => {
 app.use('/election', electionRouter);
 app.use('/users', userRouter);
 app.use('/admin', adminRouter);
+app.use('/voters', voterRouter);
 
 app.all('*', (req, res, next) => {
   throw new ErrorHandler(`Can't find ${req.originalUrl} on this server!`, 404);

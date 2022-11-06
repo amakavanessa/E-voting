@@ -4,7 +4,10 @@ const handler = require('../controller/handler.controller');
 const catchAsync = require('../common/catch_Async');
 const successRes = require('../utils/successResponse');
 const middlewares = require('../common/middlewares');
+const voterRouter = require('./voter.routes');
 const router = express.Router();
+
+router.use('/:slug/voters', voterRouter);
 
 router
   .route('/')

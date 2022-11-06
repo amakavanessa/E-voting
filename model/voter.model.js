@@ -4,6 +4,7 @@ const voterSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
+    unique: true,
   },
   election: {
     type: mongoose.Schema.ObjectId,
@@ -13,6 +14,12 @@ const voterSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+});
+
+voterSchema.pre(/^find/, function (next) {
+  this.populate('user', 'name email');
+
+  next();
 });
 
 const Voter = mongoose.model('Voter', voterSchema);
